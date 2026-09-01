@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitação de Cadastro - Uber Corporativo</title>
+
+    <style>
+        :root {
+            --uber-black: #000000;
+            --uber-dark: #1F1F1F;
+            --uber-gray: #F3F3F3;
+            --white: #FFFFFF;
+            --gray-text: #555555;
+            --gray-light: #E0E0E0;
+            --success: #27AE60;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--uber-gray);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .form-card {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 580px;
+            overflow: hidden;
+            border-top: 10px solid var(--uber-black);
+        }
+
+        .header {
+            padding: 35px 35px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: var(--uber-black);
+            font-size: 26px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--gray-text);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .steps-container {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 60px 25px;
+            position: relative;
+        }
+
+        .steps-container::before {
+            content: "";
+            position: absolute;
+            top: 25px;
+            left: 70px;
+            right: 70px;
+            height: 2px;
+            background: var(--gray-light);
+            z-index: 1;
+        }
+
+        .step-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gray-light);
+            color: var(--gray-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            z-index: 2;
+        }
+
+        .step-dot.active {
+            background: var(--uber-black);
+            color: white;
+            box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.15);
+        }
+
+        .step-dot.completed {
+            background: var(--success);
+            color: white;
+        }
+
+        form {
+            padding: 0 35px 35px;
+        }
+
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-title {
+            color: var(--uber-black);
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 13.5px;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid var(--gray-light);
+            border-radius: 8px;
+            font-size: 14px;
+            color: #333;
+            background: white;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--uber-black);
+            box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .row {
+            display: flex;
+            gap: 16px;
+        }
+
+        .col {
+            flex: 1;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        button {
+            padding: 13px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .btn-next {
+            background: var(--uber-black);
+            color: white;
+            flex: 2;
+        }
+
+        .btn-prev {
+            background: transparent;
+            border: 1.5px solid var(--uber-black);
+            color: var(--uber-black);
+            flex: 1;
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 40px 25px;
+        }
+
+        .success-message.active {
+            display: block;
+        }
+
+        .success-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: #E8F5E9;
+            color: var(--success);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin: 0 auto 20px;
+        }
+
+        .success-message h2 {
+            color: var(--uber-black);
+            margin-bottom: 10px;
+        }
+
+        .success-message p {
+            color: var(--gray-text);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .protocolo-box {
+            margin-top: 24px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            background: #fafafa;
+        }
+
+        .protocolo-box span {
+            display: block;
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .protocolo-box strong {
+            display: block;
+            font-size: 21px;
+            margin-bottom: 14px;
+            word-break: break-word;
+        }
+
+        .protocolo-box p {
+            margin-top: 12px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .btn-copiar {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            background: var(--uber-black);
+            color: white;
+            font-weight: 600;
+        }
+
+        @media (max-width: 480px) {
+            .row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            form,
+            .header {
+                padding: 20px;
+            }
+
+            .steps-container {
+                padding: 0 30px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form-card">
+
+        <div class="header">
+            <h1>Cadastro Uber Corporativo</h1>
+
+            <p>
+                Solicitação de vinculação de colaboradores à conta corporativa da Uber.
+            </p>
+        </div>
+
+        <div class="steps-container">
+            <div class="step-dot active">1</div>
+            <div class="step-dot">2</div>
+            <div class="step-dot">3</div>
+        </div>
+
+        <form id="uberForm">
+            <input type="hidden" name="plataforma" value="Uber">
+            <input type="hidden" name="id_solicitacao" value="">
+
+            <div class="form-step active">
+                <div class="step-title">Etapa 1: Dados do Solicitante</div>
+
+                <div class="form-group">
+                    <label for="nome_solicitante">Nome do Solicitante</label>
+
+                    <input
+                        type="text"
+                        id="nome_solicitante"
+                        name="nome_solicitante"
+                        placeholder="Seu nome completo"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="email_solicitante">
+                        E-mail Corporativo do Solicitante
+                    </label>
+
+                    <input
+                        type="email"
+                        id="email_solicitante"
+                        name="email_solicitante"
+                        placeholder="seu.email@empresa.com"
+                        required
+                    >
+                </div>
+            </div>
+
+            <div class="form-step">
+                <div class="step-title">Etapa 2: Dados do Colaborador</div>
+
+                <div class="form-group">
+                    <label for="nome_colaborador">Nome do Colaborador</label>
+
+                    <input
+                        type="text"
+                        id="nome_colaborador"
+                        name="nome_colaborador"
+                        placeholder="Nome completo do colaborador"
+                        required
+                    >
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="email_colaborador">
+                                E-mail Corporativo
+                            </label>
+
+                            <input
+                                type="email"
+                                id="email_colaborador"
+                                name="email_colaborador"
+                                placeholder="nome.sobrenome@empresa.com"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="telefone">Número de Telefone</label>
+
+                            <input
+                                type="text"
+                                id="telefone"
+                                name="telefone"
+                                placeholder="(00) 90000-0000"
+                                maxlength="15"
+                                required
+                            >
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-step">
+                <div class="step-title">
+                    Etapa 3: Observações Adicionais
+                </div>
+
+                <div class="form-group">
+                    <label for="observacoes">
+                        Observações (Opcional):
+                    </label>
+
+                    <textarea
+                        id="observacoes"
+                        name="observacoes"
+                        placeholder="Informe o centro de custo, motivo da viagem ou qualquer detalhe relevante."
+                    ></textarea>
+                </div>
+            </div>
+
+            <div class="btn-container">
+                <button
+                    type="button"
+                    class="btn-prev"
+                    id="btnPrev"
+                    style="display: none;"
+                >
+                    Voltar
+                </button>
+
+                <button
+                    type="button"
+                    class="btn-next"
+                    id="btnNext"
+                >
+                    Avançar
+                </button>
+            </div>
+        </form>
+
+        <div class="success-message" id="successMessage">
+            <div class="success-icon">✓</div>
+
+            <h2>Solicitação enviada!</h2>
+
+            <p>
+                A solicitação de cadastro no Uber Corporativo
+                foi registrada com sucesso.
+            </p>
+
+            <div class="protocolo-box">
+                <span>ID da Solicitação</span>
+
+                <strong id="idSolicitacao"></strong>
+
+                <button
+                    type="button"
+                    class="btn-copiar"
+                    onclick="copiarIdSolicitacao()"
+                >
+                    Copiar ID
+                </button>
+
+                <p>
+                    Guarde este número para futuras consultas.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        /*
+         * URL removida da versão pública do projeto.
+         * A integração real é realizada via Google Apps Script.
+         */
+        const APPS_SCRIPT_URL =
+            "URL_REMOVIDA_PARA_PORTFOLIO";
+
+        const form =
+            document.getElementById("uberForm");
+
+        const steps =
+            Array.from(
+                document.querySelectorAll(".form-step")
+            );
+
+        const dots =
+            Array.from(
+                document.querySelectorAll(".step-dot")
+            );
+
+        const btnNext =
+            document.getElementById("btnNext");
+
+        const btnPrev =
+            document.getElementById("btnPrev");
+
+        const successMessage =
+            document.getElementById("successMessage");
+
+        let currentStep = 0;
+
+        function gerarIdSolicitacao(prefixo) {
+
+            const agora = new Date();
+
+            const doisDigitos =
+                valor =>
+                    String(valor).padStart(2, "0");
+
+            const data =
+                agora.getFullYear() +
+                doisDigitos(
+                    agora.getMonth() + 1
+                ) +
+                doisDigitos(
+                    agora.getDate()
+                );
+
+            const hora =
+                doisDigitos(
+                    agora.getHours()
+                ) +
+                doisDigitos(
+                    agora.getMinutes()
+                ) +
+                doisDigitos(
+                    agora.getSeconds()
+                );
+
+            const aleatorio =
+                Math.floor(
+                    1000 +
+                    Math.random() * 9000
+                );
+
+            return `${prefixo}-${data}-${hora}-${aleatorio}`;
+        }
+
+        async function copiarIdSolicitacao() {
+
+            const id =
+                document
+                    .getElementById(
+                        "idSolicitacao"
+                    )
+                    .textContent;
+
+            try {
+
+                await navigator
+                    .clipboard
+                    .writeText(id);
+
+                alert(
+                    "ID copiado com sucesso!"
+                );
+
+            } catch (erro) {
+
+                const campoTemporario =
+                    document
+                        .createElement(
+                            "textarea"
+                        );
+
+                campoTemporario.value =
+                    id;
+
+                document.body.appendChild(
+                    campoTemporario
+                );
+
+                campoTemporario.select();
+
+                document.execCommand(
+                    "copy"
+                );
+
+                campoTemporario.remove();
+
+                alert(
+                    "ID copiado com sucesso!"
+                );
+            }
+        }
+
+        function updateForm() {
+
+            steps.forEach(
+                (step, index) => {
+
+                    step.classList.toggle(
+                        "active",
+                        index === currentStep
+                    );
+                }
+            );
+
+            dots.forEach(
+                (dot, index) => {
+
+                    dot.classList.toggle(
+                        "active",
+                        index === currentStep
+                    );
+
+                    dot.classList.toggle(
+                        "completed",
+                        index < currentStep
+                    );
+                }
+            );
+
+            btnPrev.style.display =
+                currentStep === 0
+                    ? "none"
+                    : "inline-flex";
+
+            btnNext.textContent =
+                currentStep ===
+                steps.length - 1
+                    ? "Enviar Solicitação"
+                    : "Avançar";
+        }
+
+        function validateStep() {
+
+            const campos =
+                steps[currentStep]
+                    .querySelectorAll(
+                        "input, textarea"
+                    );
+
+            for (
+                const campo of campos
+            ) {
+
+                if (
+                    !campo.checkValidity()
+                ) {
+
+                    campo.reportValidity();
+
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        async function enviarFormulario() {
+
+            btnNext.disabled = true;
+
+            btnPrev.disabled = true;
+
+            btnNext.textContent =
+                "Enviando...";
+
+            const campoId =
+                form.querySelector(
+                    'input[name="id_solicitacao"]'
+                );
+
+            if (!campoId.value) {
+
+                campoId.value =
+                    gerarIdSolicitacao(
+                        "UBR"
+                    );
+            }
+
+            const dados =
+                new URLSearchParams();
+
+            form
+                .querySelectorAll(
+                    "input, textarea"
+                )
+                .forEach(
+                    campo => {
+
+                        if (
+                            campo.name &&
+                            campo.type !==
+                            "button"
+                        ) {
+
+                            dados.append(
+                                campo.name,
+                                campo.value
+                            );
+                        }
+                    }
+                );
+
+            try {
+
+                /*
+                 * Mantido apenas para demonstrar
+                 * a lógica de integração.
+                 *
+                 * A URL real não faz parte
+                 * da versão pública.
+                 */
+
+                await fetch(
+                    APPS_SCRIPT_URL,
+                    {
+                        method: "POST",
+                        mode: "no-cors",
+                        body: dados
+                    }
+                );
+
+                document
+                    .getElementById(
+                        "idSolicitacao"
+                    )
+                    .textContent =
+                        campoId.value;
+
+                form.style.display =
+                    "none";
+
+                document
+                    .querySelector(
+                        ".steps-container"
+                    )
+                    .style.display =
+                        "none";
+
+                successMessage
+                    .classList
+                    .add(
+                        "active"
+                    );
+
+            } catch (erro) {
+
+                console.error(
+                    erro
+                );
+
+                alert(
+                    "Não foi possível enviar a solicitação. " +
+                    "Verifique sua conexão e tente novamente."
+                );
+
+                btnNext.disabled =
+                    false;
+
+                btnPrev.disabled =
+                    false;
+
+                btnNext.textContent =
+                    "Enviar Solicitação";
+            }
+        }
+
+        btnNext
+            .addEventListener(
+                "click",
+                () => {
+
+                    if (
+                        !validateStep()
+                    ) {
+                        return;
+                    }
+
+                    if (
+                        currentStep <
+                        steps.length - 1
+                    ) {
+
+                        currentStep++;
+
+                        updateForm();
+
+                    } else {
+
+                        enviarFormulario();
+                    }
+                }
+            );
+
+        btnPrev
+            .addEventListener(
+                "click",
+                () => {
+
+                    if (
+                        currentStep > 0
+                    ) {
+
+                        currentStep--;
+
+                        updateForm();
+                    }
+                }
+            );
+
+        document
+            .getElementById(
+                "telefone"
+            )
+            .addEventListener(
+                "input",
+                function (event) {
+
+                    let valor =
+                        event.target.value
+                            .replace(
+                                /\D/g,
+                                ""
+                            )
+                            .slice(
+                                0,
+                                11
+                            );
+
+                    if (
+                        valor.length > 10
+                    ) {
+
+                        valor =
+                            valor.replace(
+                                /^(\d{2})(\d{5})(\d{4})$/,
+                                "($1) $2-$3"
+                            );
+
+                    } else if (
+                        valor.length > 6
+                    ) {
+
+                        valor =
+                            valor.replace(
+                                /^(\d{2})(\d{4})(\d{0,4})$/,
+                                "($1) $2-$3"
+                            );
+
+                    } else if (
+                        valor.length > 2
+                    ) {
+
+                        valor =
+                            valor.replace(
+                                /^(\d{2})(\d{0,5})$/,
+                                "($1) $2"
+                            );
+
+                    } else if (
+                        valor.length > 0
+                    ) {
+
+                        valor =
+                            "(" + valor;
+                    }
+
+                    event.target.value =
+                        valor;
+                }
+            );
+
+        updateForm();
+
+    </script>
+</body>
+</html>
