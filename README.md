@@ -50,4 +50,4 @@ Este repositório contém uma apresentação em PowerPoint com a demonstração 
 
 ---
 
-**Projeto desenvolvido por Luana**
+**Projeto desenvolvido por Luana Parvas**
