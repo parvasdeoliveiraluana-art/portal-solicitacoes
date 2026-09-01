@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitação de Cadastro - Espresso</title>
+
+    <style>
+        :root {
+            --purple-primary: #512DA8;
+            --purple-dark: #311B92;
+            --purple-light: #F4F0FA;
+            --white: #FFFFFF;
+            --gray-text: #666666;
+            --gray-light: #E0E0E0;
+            --success: #388E3C;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--purple-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .form-card {
+            background: var(--white);
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(81, 45, 168, 0.08);
+            width: 100%;
+            max-width: 580px;
+            overflow: hidden;
+            border-top: 10px solid var(--purple-primary);
+        }
+
+        .header {
+            padding: 35px 35px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: var(--purple-dark);
+            font-size: 26px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--gray-text);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .steps-container {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 40px 25px;
+            position: relative;
+        }
+
+        .steps-container::before {
+            content: "";
+            position: absolute;
+            top: 15px;
+            left: 50px;
+            right: 50px;
+            height: 2px;
+            background: var(--gray-light);
+            z-index: 1;
+        }
+
+        .step-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gray-light);
+            color: var(--gray-text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            z-index: 2;
+        }
+
+        .step-dot.active {
+            background: var(--purple-primary);
+            color: white;
+            box-shadow: 0 0 0 4px rgba(81, 45, 168, 0.2);
+        }
+
+        .step-dot.completed {
+            background: var(--success);
+            color: white;
+        }
+
+        form {
+            padding: 0 35px 35px;
+        }
+
+        .form-step {
+            display: none;
+        }
+
+        .form-step.active {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-title {
+            color: var(--purple-primary);
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 13.5px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid var(--gray-light);
+            border-radius: 8px;
+            font-size: 14px;
+            color: #333;
+            background: white;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--purple-primary);
+            box-shadow: 0 0 0 3px rgba(81, 45, 168, 0.12);
+        }
+
+        .row {
+            display: flex;
+            gap: 16px;
+        }
+
+        .col {
+            flex: 1;
+        }
+
+        .info-box {
+            background: #FFF9C4;
+            border-left: 4px solid #FBC02D;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #5D4037;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        button {
+            padding: 13px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .btn-next {
+            background: var(--purple-primary);
+            color: white;
+            flex: 2;
+        }
+
+        .btn-prev {
+            background: transparent;
+            border: 1.5px solid var(--purple-primary);
+            color: var(--purple-primary);
+            flex: 1;
+        }
+
+        .success-message {
+            display: none;
+            text-align: center;
+            padding: 40px 25px;
+        }
+
+        .success-message.active {
+            display: block;
+        }
+
+        .success-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: #E8F5E9;
+            color: var(--success);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin: 0 auto 20px;
+        }
+
+        .success-message h2 {
+            color: var(--purple-dark);
+            margin-bottom: 10px;
+        }
+
+        .success-message p {
+            color: var(--gray-text);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .protocolo-box {
+            margin-top: 24px;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            background: #fafafa;
+        }
+
+        .protocolo-box span {
+            display: block;
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .protocolo-box strong {
+            display: block;
+            font-size: 21px;
+            margin-bottom: 14px;
+            word-break: break-word;
+        }
+
+        .protocolo-box p {
+            margin-top: 12px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .btn-copiar {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            background: var(--purple-primary);
+            color: white;
+            font-weight: 600;
+        }
+
+        @media (max-width: 480px) {
+            .row {
+                flex-direction: column;
+                gap: 0;
+            }
+
+            form,
+            .header {
+                padding: 20px;
+            }
+
+            .steps-container {
+                padding: 0 20px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="form-card">
+
+        <div class="header">
+            <h1>Cadastro Espresso</h1>
+            <p>
+                Insira com atenção as informações solicitadas para a criação
+                das credenciais e parametrização correta de reembolsos.
+            </p>
+        </div>
+
+        <div class="steps-container">
+            <div class="step-dot active">1</div>
+            <div class="step-dot">2</div>
+            <div class="step-dot">3</div>
+            <div class="step-dot">4</div>
+        </div>
+
+        <form id="espressoForm">
+            <input type="hidden" name="plataforma" value="Espresso">
+            <input type="hidden" name="id_solicitacao" value="">
+
+            <div class="form-step active">
+                <div class="step-title">Etapa 1: Dados do Solicitante</div>
+
+                <div class="form-group">
+                    <label for="nome_solicitante">Nome do solicitante</label>
+                    <input
+                        type="text"
+                        id="nome_solicitante"
+                        name="nome_solicitante"
+                        placeholder="Seu nome completo"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="email_solicitante">E-mail do solicitante</label>
+                    <input
+                        type="email"
+                        id="email_solicitante"
+                        name="email_solicitante"
+                        placeholder="seu.email@empresa.com"
+                        required
+                    >
+                </div>
+            </div>
+
+            <div class="form-step">
+                <div class="step-title">Etapa 2: Dados do Colaborador</div>
+
+                <div class="form-group">
+                    <label for="nome_colaborador">Nome do colaborador</label>
+                    <input
+                        type="text"
+                        id="nome_colaborador"
+                        name="nome_colaborador"
+                        placeholder="Nome completo do colaborador sem abreviações"
+                        required
+                    >
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="cpf">CPF</label>
+                            <input
+                                type="text"
+                                id="cpf"
+                                name="cpf"
+                                placeholder="000.000.000-00"
+                                maxlength="14"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="email_colaborador">E-mail Corporativo</label>
+                            <input
+                                type="email"
+                                id="email_colaborador"
+                                name="email_colaborador"
+                                placeholder="nome.sobrenome@empresa.com"
+                                required
+                            >
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-step">
+                <div class="step-title">Etapa 3: Dados de Pagamento / Reembolso</div>
+
+                <div class="info-box">
+                    <strong>Atenção:</strong>
+                    Certifique-se de que os dados informados pertencem ao CPF
+                    do colaborador cadastrado.
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="tipo_conta">Tipo de Conta</label>
+                            <select id="tipo_conta" name="tipo_conta" required>
+                                <option value="" disabled selected>Escolha uma opção...</option>
+                                <option value="Conta Corrente">Conta Corrente</option>
+                                <option value="Conta Poupança">Conta Poupança</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="forma_pagamento">Forma de pagamento</label>
+                            <select id="forma_pagamento" name="forma_pagamento" required>
+                                <option value="" disabled selected>Escolha uma opção...</option>
+                                <option value="Pix">Pix</option>
+                                <option value="Telefone">Telefone</option>
+                                <option value="CPF">CPF</option>
+                                <option value="CNPJ">CNPJ</option>
+                                <option value="E-mail / Chave Aleatória">E-mail / Chave Aleatória</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label id="label_chave_pix" for="chave_pix">Chave Pix para Pagamento</label>
+                    <input
+                        type="text"
+                        id="chave_pix"
+                        name="chave_pix"
+                        placeholder="Digite a sua chave Pix aqui"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="banco">Instituição Bancária</label>
+                    <input
+                        type="text"
+                        id="banco"
+                        name="banco"
+                        placeholder="Ex: Itaú, Bradesco, Banco do Brasil"
+                        required
+                    >
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="agencia">Agência</label>
+                            <input
+                                type="text"
+                                id="agencia"
+                                name="agencia"
+                                placeholder="Ex: 0001"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="conta">Número da Conta</label>
+                            <input
+                                type="text"
+                                id="conta"
+                                name="conta"
+                                placeholder="Ex: 12345-6"
+                                required
+                            >
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-step">
+                <div class="step-title">Etapa 4: Lotação Interna e Observações</div>
+
+                <div class="form-group">
+                    <label for="centro_custo">Código do Centro de Custo</label>
+                    <select id="centro_custo" name="centro_custo" required>
+                        <option value="" disabled selected>Selecione o Código do Centro de Custo...</option>
+
+                        <!-- Dados fictícios utilizados apenas para demonstração do portfólio -->
+                        <option value="100001 - ADMINISTRATIVO">100001 - ADMINISTRATIVO</option>
+                        <option value="100002 - FINANCEIRO">100002 - FINANCEIRO</option>
+                        <option value="100003 - RECURSOS HUMANOS">100003 - RECURSOS HUMANOS</option>
+                        <option value="100004 - TECNOLOGIA">100004 - TECNOLOGIA</option>
+                        <option value="200001 - COMERCIAL">200001 - COMERCIAL</option>
+                        <option value="200002 - MARKETING">200002 - MARKETING</option>
+                        <option value="300001 - OPERAÇÕES">300001 - OPERAÇÕES</option>
+                        <option value="300002 - LOGÍSTICA">300002 - LOGÍSTICA</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="observacoes">Observações:</label>
+                    <textarea id="observacoes" name="observacoes" placeholder=""></textarea>
+                </div>
+            </div>
+
+            <div class="btn-container">
+                <button type="button" class="btn-prev" id="btnPrev" style="display: none;">
+                    Voltar
+                </button>
+
+                <button type="button" class="btn-next" id="btnNext">
+                    Avançar
+                </button>
+            </div>
+        </form>
+
+        <div class="success-message" id="successMessage">
+            <div class="success-icon">✓</div>
+
+            <h2>Solicitação enviada!</h2>
+
+            <p>
+                A solicitação de cadastro no Espresso foi registrada com sucesso.
+            </p>
+
+            <div class="protocolo-box">
+                <span>ID da Solicitação</span>
+
+                <strong id="idSolicitacao"></strong>
+
+                <button
+                    type="button"
+                    class="btn-copiar"
+                    onclick="copiarIdSolicitacao()"
+                >
+                    Copiar ID
+                </button>
+
+                <p>Guarde este número para futuras consultas.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /*
+         * URL removida da versão pública do projeto.
+         * A integração real é realizada por Google Apps Script.
+         */
+        const APPS_SCRIPT_URL = "URL_REMOVIDA_PARA_PORTFOLIO";
+
+        const form = document.getElementById("espressoForm");
+        const steps = Array.from(document.querySelectorAll(".form-step"));
+        const dots = Array.from(document.querySelectorAll(".step-dot"));
+        const btnNext = document.getElementById("btnNext");
+        const btnPrev = document.getElementById("btnPrev");
+        const successMessage = document.getElementById("successMessage");
+
+        let currentStep = 0;
+
+        function gerarIdSolicitacao(prefixo) {
+            const agora = new Date();
+            const doisDigitos = valor => String(valor).padStart(2, "0");
+
+            const data =
+                agora.getFullYear() +
+                doisDigitos(agora.getMonth() + 1) +
+                doisDigitos(agora.getDate());
+
+            const hora =
+                doisDigitos(agora.getHours()) +
+                doisDigitos(agora.getMinutes()) +
+                doisDigitos(agora.getSeconds());
+
+            const aleatorio =
+                Math.floor(1000 + Math.random() * 9000);
+
+            return `${prefixo}-${data}-${hora}-${aleatorio}`;
+        }
+
+        async function copiarIdSolicitacao() {
+            const id =
+                document.getElementById("idSolicitacao").textContent;
+
+            try {
+                await navigator.clipboard.writeText(id);
+                alert("ID copiado com sucesso!");
+            } catch (erro) {
+                const campoTemporario =
+                    document.createElement("textarea");
+
+                campoTemporario.value = id;
+                document.body.appendChild(campoTemporario);
+                campoTemporario.select();
+                document.execCommand("copy");
+                campoTemporario.remove();
+
+                alert("ID copiado com sucesso!");
+            }
+        }
+
+        document
+            .getElementById("forma_pagamento")
+            .addEventListener("change", function () {
+                const label =
+                    document.getElementById("label_chave_pix");
+
+                const input =
+                    document.getElementById("chave_pix");
+
+                const configuracoes = {
+                    "Telefone": [
+                        "Telefone para Pagamento",
+                        "Digite seu telefone (com DDD)"
+                    ],
+                    "CPF": [
+                        "CPF para Pagamento",
+                        "Digite seu CPF"
+                    ],
+                    "CNPJ": [
+                        "CNPJ para Pagamento",
+                        "Digite seu CNPJ"
+                    ],
+                    "E-mail / Chave Aleatória": [
+                        "E-mail ou Chave Aleatória para Pagamento",
+                        "Digite seu e-mail ou a chave aleatória"
+                    ],
+                    "Pix": [
+                        "Chave Pix para Pagamento",
+                        "Digite a sua chave Pix aqui"
+                    ]
+                };
+
+                const dados =
+                    configuracoes[this.value] || configuracoes.Pix;
+
+                label.textContent = dados[0];
+                input.placeholder = dados[1];
+            });
+
+        function updateForm() {
+            steps.forEach((step, index) => {
+                step.classList.toggle(
+                    "active",
+                    index === currentStep
+                );
+            });
+
+            dots.forEach((dot, index) => {
+                dot.classList.toggle(
+                    "active",
+                    index === currentStep
+                );
+
+                dot.classList.toggle(
+                    "completed",
+                    index < currentStep
+                );
+            });
+
+            btnPrev.style.display =
+                currentStep === 0
+                    ? "none"
+                    : "inline-flex";
+
+            btnNext.textContent =
+                currentStep === steps.length - 1
+                    ? "Finalizar Cadastro"
+                    : "Avançar";
+        }
+
+        function validateStep() {
+            const campos =
+                steps[currentStep].querySelectorAll(
+                    "input, select, textarea"
+                );
+
+            for (const campo of campos) {
+                if (!campo.checkValidity()) {
+                    campo.reportValidity();
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        async function enviarFormulario() {
+            btnNext.disabled = true;
+            btnPrev.disabled = true;
+            btnNext.textContent = "Enviando...";
+
+            const campoId =
+                form.querySelector(
+                    'input[name="id_solicitacao"]'
+                );
+
+            if (!campoId.value) {
+                campoId.value =
+                    gerarIdSolicitacao("ESP");
+            }
+
+            const dados =
+                new URLSearchParams();
+
+            form
+                .querySelectorAll(
+                    "input, select, textarea"
+                )
+                .forEach(campo => {
+                    if (
+                        campo.name &&
+                        campo.type !== "button"
+                    ) {
+                        dados.append(
+                            campo.name,
+                            campo.value
+                        );
+                    }
+                });
+
+            try {
+                /*
+                 * Mantido apenas para demonstrar a lógica de integração.
+                 * A URL real não faz parte da versão pública.
+                 */
+                await fetch(
+                    APPS_SCRIPT_URL,
+                    {
+                        method: "POST",
+                        mode: "no-cors",
+                        body: dados
+                    }
+                );
+
+                document.getElementById(
+                    "idSolicitacao"
+                ).textContent = campoId.value;
+
+                form.style.display = "none";
+
+                document.querySelector(
+                    ".steps-container"
+                ).style.display = "none";
+
+                successMessage.classList.add("active");
+            } catch (erro) {
+                console.error(erro);
+
+                alert(
+                    "Não foi possível enviar a solicitação. " +
+                    "Verifique sua conexão e tente novamente."
+                );
+
+                btnNext.disabled = false;
+                btnPrev.disabled = false;
+                btnNext.textContent =
+                    "Finalizar Cadastro";
+            }
+        }
+
+        btnNext.addEventListener("click", () => {
+            if (!validateStep()) {
+                return;
+            }
+
+            if (
+                currentStep <
+                steps.length - 1
+            ) {
+                currentStep++;
+                updateForm();
+            } else {
+                enviarFormulario();
+            }
+        });
+
+        btnPrev.addEventListener("click", () => {
+            if (currentStep > 0) {
+                currentStep--;
+                updateForm();
+            }
+        });
+
+        document
+            .getElementById("cpf")
+            .addEventListener(
+                "input",
+                function (event) {
+                    let valor =
+                        event.target.value
+                            .replace(/\D/g, "")
+                            .slice(0, 11);
+
+                    if (valor.length > 9) {
+                        valor = valor.replace(
+                            /^(\d{3})(\d{3})(\d{3})(\d{1,2})$/,
+                            "$1.$2.$3-$4"
+                        );
+                    } else if (valor.length > 6) {
+                        valor = valor.replace(
+                            /^(\d{3})(\d{3})(\d{1,3})$/,
+                            "$1.$2.$3"
+                        );
+                    } else if (valor.length > 3) {
+                        valor = valor.replace(
+                            /^(\d{3})(\d{1,3})$/,
+                            "$1.$2"
+                        );
+                    }
+
+                    event.target.value = valor;
+                }
+            );
+
+        updateForm();
+    </script>
+</body>
+</html>
