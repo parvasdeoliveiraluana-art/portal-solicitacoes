@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Portal de Solicitações Corporativas</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <main class="portal">
+
+        <header class="cabecalho">
+            <h1>Portal de Solicitações Corporativas</h1>
+
+            <p>
+                Selecione abaixo o tipo de solicitação que deseja realizar.
+            </p>
+        </header>
+
+
+        <section class="solicitacoes">
+
+            <div class="card" onclick="abrirFormulario('espresso')">
+
+                <div class="icone">☕</div>
+
+                <h2>Cadastro Espresso</h2>
+
+                <p>
+                    Solicitação de cadastro e parametrização
+                    na plataforma Espresso.
+                </p>
+
+                <button type="button">
+                    Solicitar cadastro
+                </button>
+
+            </div>
+
+
+            <div class="card" onclick="abrirFormulario('uber')">
+
+                <div class="icone">🚗</div>
+
+                <h2>Cadastro Uber</h2>
+
+                <p>
+                    Solicitação de cadastro e acesso
+                    à plataforma Uber.
+                </p>
+
+                <button type="button">
+                    Solicitar cadastro
+                </button>
+
+            </div>
+
+
+            <div class="card" onclick="abrirFormulario('webfrota')">
+
+                <div class="icone">🚙</div>
+
+                <h2>Cadastro WebFrota</h2>
+
+                <p>
+                    Solicitação de cadastro e acesso
+                    à plataforma WebFrota.
+                </p>
+
+                <button type="button">
+                    Solicitar cadastro
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <footer>
+            <p>
+                Portal de Solicitações Corporativas
+            </p>
+        </footer>
+
+    </main>
+
+
+    <script src="app.js"></script>
+
+</body>
+</html>
