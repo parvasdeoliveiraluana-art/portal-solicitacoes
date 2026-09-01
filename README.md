@@ -40,6 +40,10 @@ Este repositório contém uma apresentação em PowerPoint com a demonstração 
 
 > O sistema operacional não está disponibilizado publicamente. A apresentação tem como objetivo demonstrar o funcionamento e a estrutura da solução desenvolvida.
 
+## 🌐 Demonstração online
+
+👉 [Acessar o Portal de Solicitações Corporativas](https://parvasdeoliveiraluana-art.github.io/portal-solicitacoes/)
+
 ## 📌 Status do projeto
 
 ✅ Projeto desenvolvido e funcional.
